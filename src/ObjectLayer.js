@@ -2,8 +2,9 @@ var Tiled = Tiled || {};
 
 (function(exports) {
 
-    // the `view` is viewport.
-    // the `screen` is not physical screen.
+    var Collision = exports.Collision;
+    var Tileset = exports.Tileset;
+    var TileLayer = exports.TileLayer;
 
     var ObjectLayer = exports.ObjectLayer = function(options) {
         for (var key in options) {
@@ -13,6 +14,7 @@ var Tiled = Tiled || {};
     };
 
     var proto = {
+        constructor: ObjectLayer,
 
         data: null,
         map: null,

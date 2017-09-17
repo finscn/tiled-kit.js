@@ -6,38 +6,18 @@ var Tiled = Tiled || {};
     var Tileset = exports.Tileset;
     var TileLayer = exports.TileLayer;
 
-    // the `view` is viewport.
-    // the `screen` is not physical screen.
-
-    var IsometricTileLayer = exports.IsometricTileLayer = function(options) {
+    var OrthogonalTileLayer = exports.OrthogonalTileLayer = function(options) {
         for (var key in options) {
             this[key] = options[key];
         }
     };
 
     var proto = {
-        constructor: IsometricTileLayer,
-
-        halfTileWidth: null,
-        halfTileHeight: null,
-
-        viewScaleY: null,
-        viewScaleZ: null,
-        viewRotation: Math.PI / 4,
+        constructor: OrthogonalTileLayer,
 
         init: function() {
-            this.gridSize = Math.max(this.cols, this.rows);
-            this.width = this.tileWidth * this.gridSize;
-            this.height = this.tileHeight * this.gridSize;
-
-            this.tileSide = this.tileSide || Math.sqrt(Math.pow(this.tileWidth, 2) / 2);
-            this.halfTileWidth = this.tileWidth / 2;
-            this.halfTileHeight = this.tileHeight / 2;
-
-            this.viewScaleY = this.viewScaleY || this.tileHeight / this.tileWidth;
-            this.viewScaleZ = Math.sqrt(1 - this.viewScaleY * this.viewScaleY);
-            this.cos = Math.cos(this.viewRotation);
-            this.sin = Math.sin(this.viewRotation);
+            this.width = this.tileWidth * this.cols;
+            this.height = this.tileHeight * this.rows;
 
             if (this.extX && !this.extCols) {
                 this.extCols = Math.ceil(this.extX / this.tileWidth);
@@ -46,11 +26,11 @@ var Tiled = Tiled || {};
                 this.extRows = Math.ceil(this.extY / this.tileHeight);
             }
 
-            this.mapWidth = (this.mapCols + this.mapRows) * this.halfTileWidth;
-            this.mapHeight = (this.mapCols + this.mapRows) * this.halfTileHeight;
+            this.mapWidth = this.mapCols * this.tileWidth;
+            this.mapHeight = this.mapRows * this.tileHeight;
 
-            this.maxViewCol = this.maxViewCol === null ? (this.mapCols + this.mapRows) : this.maxViewCol;
-            this.maxViewRow = this.maxViewRow === null ? (this.mapCols + this.mapRows) : this.maxViewRow;
+            this.maxViewCol = this.maxViewCol === null ? this.mapCols : this.maxViewCol;
+            this.maxViewRow = this.maxViewRow === null ? this.mapRows : this.maxViewRow;
 
             this.restoreChangedState();
             this.setOrigin(this.originX, this.originY);
@@ -63,8 +43,8 @@ var Tiled = Tiled || {};
             options.mapData = this.mapData;
             options.mapCols = this.mapCols;
             options.mapRows = this.mapRows;
-            options.tileWidth = this.tileSide;
-            options.tileHeight = this.tileSide;
+            options.tileWidth = this.tileWidth;
+            options.tileHeight = this.tileHeight;
 
             this.collision = new Collision(options);
         },
@@ -83,11 +63,8 @@ var Tiled = Tiled || {};
             this.tileWidthScaled = this.tileWidth * scale;
             this.tileHeightScaled = this.tileHeight * scale;
 
-            this.halfTileWidthScaled = this.halfTileWidth * scale;
-            this.halfTileHeightScaled = this.halfTileHeight * scale;
-
             this.viewCols = Math.ceil(this.viewWidth / this.tileWidthScaled + 1) + 1;
-            this.viewRows = Math.ceil(this.viewHeight / this.halfTileHeightScaled + 1) + 1;
+            this.viewRows = Math.ceil(this.viewHeight / this.tileHeightScaled + 1) + 1;
 
             this.viewWidthScaled = this.viewWidth / scale;
             this.viewHeightScaled = this.viewHeight / scale;
@@ -142,13 +119,13 @@ var Tiled = Tiled || {};
             this.viewEndCol = Math.min(this.maxViewCol, col + this.viewCols);
             this.tileOffsetX = col * this.tileWidth - x;
 
-            var row = Math.floor(y / this.halfTileHeight) - 1;
+            var row = Math.floor(y / this.tileHeight);
             if (this.extRows !== 0) {
                 row = Math.max(this.minViewRow, row - this.extRows);
                 this.viewRows += this.extRows + this.extRows;
             }
             this.viewEndRow = Math.min(this.maxViewRow, row + this.viewRows);
-            this.tileOffsetY = row * this.halfTileHeight - y;
+            this.tileOffsetY = row * this.tileHeight - y;
 
             this.viewX = x;
             this.viewY = y;
@@ -162,95 +139,77 @@ var Tiled = Tiled || {};
         },
 
         mapTileToView: function(col, row) {
-            var newRow = col + row;
-            var newCol = Math.floor(col - newRow / 2);
             return {
-                col: newCol,
-                row: newRow
+                col: col,
+                row: row
             };
         },
 
         viewTileToMap: function(col, row) {
-            var newCol = Math.ceil(col + row / 2);
-            var newRow = row - newCol;
             return {
-                col: newCol,
-                row: newRow
+                col: col,
+                row: row
             };
         },
 
         // x & y is viewport system
         viewToMap: function(x, y) {
-            x = x / this.scale;
-            y = y / this.scale / this.viewScaleY;
             return {
-                x: x * this.cos + y * this.sin,
-                y: -x * this.sin + y * this.cos
+                x: x,
+                y: y
             };
         },
 
         // x & y is map system
         mapToView: function(x, y) {
-            var newX = x * this.cos - y * this.sin;
-            var newY = x * this.sin + y * this.cos;
-
             return {
-                x: newX * this.scale,
-                y: newY * this.viewScaleY * this.scale
+                x: x,
+                y: y
             };
         },
 
         // x & y is screen system
         screenToMap: function(x, y) {
-            x = x / this.scale + this.viewX;
-            y = (y / this.scale + this.viewY) / this.viewScaleY;
             return {
-                x: x * this.cos + y * this.sin,
-                y: -x * this.sin + y * this.cos
+                x: x / this.scale + this.viewX,
+                y: y / this.scale + this.viewY
             };
         },
 
         // x & y is map system
         mapToScreen: function(x, y) {
-            var newX = x * this.cos - y * this.sin;
-            var newY = x * this.sin + y * this.cos;
-
             return {
-                x: (newX - this.viewX) * this.scale,
-                y: (newY * this.viewScaleY - this.viewY) * this.scale
+                x: (x - this.viewX) * this.scale,
+                y: (y - this.viewY) * this.scale
             };
         },
 
         // x & y is screen system
         getTileFromScreen: function(x, y) {
             x = x / this.scale + this.viewX;
-            y = (y / this.scale + this.viewY) / this.viewScaleY;
+            y = y / this.scale + this.viewY;
 
-            var newX = x * this.cos + y * this.sin;
-            var newY = -x * this.sin + y * this.cos;
+            var col = Math.floor(x / this.tileWidth);
+            var row = Math.floor(y / this.tileHeight);
 
-            var col = Math.floor(newX / this.tileSide);
-            var row = Math.floor(newY / this.tileSide);
-
-            x = col * this.tileSide;
-            y = row * this.tileSide;
+            x = col * this.tileWidth;
+            y = row * this.tileHeight;
 
             return {
                 x: x,
                 y: y,
-                col: col,
-                row: row
-            };
+                col: Math.floor(x / this.tileWidth),
+                row: Math.floor(y / this.tileHeight)
+            }
         },
-
     };
 
     for (var p in TileLayer.prototype) {
-        IsometricTileLayer.prototype[p] = TileLayer.prototype[p];
+        OrthogonalTileLayer.prototype[p] = TileLayer.prototype[p];
     }
 
     for (var p in proto) {
-        IsometricTileLayer.prototype[p] = proto[p];
+        OrthogonalTileLayer.prototype[p] = proto[p];
     }
 
 }(Tiled));

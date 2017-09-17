@@ -2,6 +2,8 @@ var Tiled = Tiled || {};
 
 (function(exports) {
 
+    var Collision = exports.Collision;
+
     var Tileset = exports.Tileset = function(options) {
         for (var key in options) {
             this[key] = options[key];
@@ -10,9 +12,10 @@ var Tiled = Tiled || {};
     };
 
     var proto = {
+        constructor: Tileset,
 
-        data: null,
         map: null,
+        data: null,
 
         init: function() {
             var data = this.data;
@@ -29,7 +32,6 @@ var Tiled = Tiled || {};
             this.spacing = data.spacing;
             this.imagePath = data.image;
 
-
             if (data.tileoffset) {
                 this.offsetX = data.tileoffset.x || 0;
                 this.offsetY = data.tileoffset.y || 0;
@@ -37,6 +39,13 @@ var Tiled = Tiled || {};
                 this.offsetX = 0;
                 this.offsetY = 0;
             }
+
+            // TODO:
+            //   data.grid
+            //   data.terrains
+            //   data.tiles
+            //   data.tileproperties
+            //   transparent color
 
             this.initTilesInfo();
         },
@@ -58,6 +67,8 @@ var Tiled = Tiled || {};
                     y: this.tileHeight * row,
                     w: this.tileWidth,
                     h: this.tileHeight,
+                    ox: this.offsetX,
+                    oy: this.offsetY + (map.tileHeight - this.tileHeight),
                 };
                 map.tileTable[id] = tileInfo;
                 map.tileList[idx] = tileInfo;
@@ -73,6 +84,5 @@ var Tiled = Tiled || {};
     for (var p in proto) {
         Tileset.prototype[p] = proto[p];
     }
-
 
 }(Tiled));

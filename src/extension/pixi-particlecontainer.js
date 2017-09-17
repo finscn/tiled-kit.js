@@ -1,6 +1,6 @@
 var Tiled = Tiled || {};
 
-// canvas 2d
+// pixi.js & ParticleContainer
 
 (function(exports) {
 

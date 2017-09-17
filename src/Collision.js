@@ -10,6 +10,7 @@ var Tiled = Tiled || {};
     };
 
     var proto = {
+        constructor: Collision,
 
         blockTiles: 1,
 
@@ -140,7 +141,7 @@ var Tiled = Tiled || {};
             if (this.onCollided !== null) {
                 this.onCollided(box, collInfo, dx, dy);
             }
-            // console.log("tile test ",this._test)
+
             return collInfo;
         },
 

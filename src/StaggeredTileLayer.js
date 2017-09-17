@@ -3,11 +3,9 @@ var Tiled = Tiled || {};
 (function(exports) {
 
     var Collision = exports.Collision;
+    var Tileset = exports.Tileset;
     var TileLayer = exports.TileLayer;
     var IsometricTileLayer = exports.IsometricTileLayer;
-
-    // the `view` is viewport.
-    // the `screen` is not physical screen.
 
     var StaggeredTileLayer = exports.StaggeredTileLayer = function(options) {
         for (var key in options) {
@@ -18,7 +16,7 @@ var Tiled = Tiled || {};
     var proto = {
         constructor: StaggeredTileLayer,
 
-        // x & y is view system
+        // x & y is viewport system
         viewToMap: function(x, y) {
             x = x;
             y = y / this.viewScaleY;
@@ -60,7 +58,7 @@ var Tiled = Tiled || {};
 
         // x & y is screen system
         getTileFromScreen: function(x, y) {
-            x = (x - this.halfTileWidth) / this.scale + this.viewX;
+            x = x / this.scale + this.viewX;
             y = (y / this.scale + this.viewY) / this.viewScaleY;
 
             var newX = x * this.cos + y * this.sin;
@@ -69,9 +67,16 @@ var Tiled = Tiled || {};
             var col = Math.floor(newX / this.tileSide);
             var row = Math.floor(newY / this.tileSide);
 
-            var newCol = Math.floor((col - row) / 2);
             var newRow = col + row;
+            var newCol = Math.floor(col - newRow / 2);
+
+            var evenRow = newRow % 2 === 0;
+            x = newCol * this.tileWidth + (evenRow ? 0 : this.halfTileWidth);
+            y = newRow * this.halfTileWidth;
+
             return {
+                x: x,
+                y: y,
                 col: newCol,
                 row: newRow
             };

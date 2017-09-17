@@ -7,13 +7,14 @@ var Tiled = Tiled || {};
     var Collision = exports.Collision;
     var Tileset = exports.Tileset;
     var TileLayer = exports.TileLayer;
+    var OrthogonalTileLayer = exports.OrthogonalTileLayer;
     var IsometricTileLayer = exports.IsometricTileLayer;
     var StaggeredTileLayer = exports.StaggeredTileLayer;
-    var ObjectTileLayer = exports.ObjectTileLayer;
+    var ObjectLayer = exports.ObjectLayer;
     var Map = exports.Map;
 
     // `imgLoader` is a function that load img object by `tileset.name , tileset.image`
-    Map.prototype.createBaseTextureTable = function(imgLoader) {
+    Map.prototype.createTileTextures = function(imgLoader) {
         var baseTextureTable = {};
 
         for (var i = 0, len = this.tilesetList.length; i < len; i++) {
@@ -29,12 +30,8 @@ var Tiled = Tiled || {};
             baseTextureTable[name] = baseTexture;
         }
 
-        return baseTextureTable;
-    };
-
-    // `baseTextureTable` is a table with `{ "tilesetName" : baseTexture }`
-    Map.prototype.createTilemap = function(baseTextureTable) {
         var tileTextures = [];
+
         for (var i = 0, len = this.tileList.length; i < len; i++) {
             var t = this.tileList[i];
             var baseTexture = baseTextureTable[t.tileset];
@@ -43,12 +40,23 @@ var Tiled = Tiled || {};
             );
             tileTextures.push(texture);
         }
+
+        return tileTextures;
+    };
+
+    Map.prototype.createTilemap = function(tileTextures) {
         var tilemap = new PIXI.tilemap.CompositeRectTileLayer(0, tileTextures, false);
 
         return tilemap;
     };
 
-    TileLayer.prototype.updateTilemap = function(tilemap) {
+    ////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
+
+    OrthogonalTileLayer.prototype.updateTilemap = function(tilemap) {
         var scale = this.scale;
 
         var pivotX, pivotY;
@@ -83,6 +91,7 @@ var Tiled = Tiled || {};
             var tileWidth = this.tileWidth;
             var tileHeight = this.tileHeight;
             var mapData = this.mapData;
+            var tileTable = this.map.tileTable;
 
             var startRow = this.viewRow;
             var endRow = this.viewEndRow;
@@ -102,7 +111,10 @@ var Tiled = Tiled || {};
                         continue;
                     }
                     var tileIndex = gid - 1;
-                    tilemap.addFrame(tileIndex, c * tileWidth, r * tileHeight);
+                    var x = c * tileWidth;
+                    var y = r * tileHeight;
+                    var t = tileTable[gid];
+                    tilemap.addFrame(tileIndex, x + t.ox, y + t.oy);
                 }
             }
         }
@@ -150,7 +162,11 @@ var Tiled = Tiled || {};
 
             var tileWidth = this.tileWidth;
             var tileHeight = this.tileHeight;
+            var halfTileWidth = this.halfTileWidth;
+            var halfTileHeight = this.halfTileHeight;
+
             var mapData = this.mapData;
+            var tileTable = this.map.tileTable;
 
             var startRow = this.viewRow;
             var endRow = this.viewEndRow;
@@ -166,17 +182,17 @@ var Tiled = Tiled || {};
             for (var r = startRow; r < endRow; r++) {
                 var col = dataCol;
                 var row = dataRow;
+                var offsetX = evenRow ? -halfTileWidth : 0;
                 for (var c = startCol; c < endCol; c++) {
                     var rowData = mapData[row];
                     if (rowData) {
                         var gid = rowData[col];
                         if (gid) {
                             var tileIndex = gid - 1;
-
-                            var x = c * this.tileWidth + (r % 2 !== 0 ? 0 : this.halfTileWidth);
-                            var y = (r - 1) * this.halfTileHeight;
-
-                            tilemap.addFrame(tileIndex, x, y);
+                            var x = c * tileWidth + offsetX;
+                            var y = r * halfTileHeight;
+                            var t = tileTable[gid];
+                            tilemap.addFrame(tileIndex, x + t.ox, y + t.oy);
                         }
                     }
                     col++;
@@ -241,6 +257,7 @@ var Tiled = Tiled || {};
             var halfTileWidth = this.halfTileWidth;
             var halfTileHeight = this.halfTileHeight;
             var mapData = this.mapData;
+            var tileTable = this.map.tileTable;
 
             var startRow = this.viewRow;
             var endRow = this.viewEndRow;
@@ -254,53 +271,22 @@ var Tiled = Tiled || {};
             for (var r = startRow; r < endRow; r++) {
                 var rowData = mapData[r];
                 if (rowData) {
+                    var offsetX = evenRow ? -halfTileWidth : 0;
                     for (var c = startCol; c < endCol; c++) {
                         var gid = rowData[c];
                         if (!gid || gid === 0) {
                             continue;
                         }
                         var tileIndex = gid - 1;
-                        var x = c * tileWidth + (evenRow ? 0 : halfTileWidth);
-                        var y = (r - 1) * halfTileHeight;
-                        tilemap.addFrame(tileIndex, x, y);
+                        var x = c * tileWidth + offsetX;
+                        var y = r * halfTileHeight;
+                        var t = tileTable[gid];
+                        tilemap.addFrame(tileIndex, x + t.ox, y + t.oy);
                     }
                 }
                 evenRow = !evenRow;
             }
         }
-
-        //     var dataCol = Math.ceil((startCol * 2 + startRow) / 2);
-        //     var dataRow = startRow - dataCol;
-        //     var evenRow = startRow % 2 === 0;
-
-        //     for (var r = startRow; r < endRow; r++) {
-        //         var col = dataCol;
-        //         var row = dataRow;
-        //         for (var c = startCol; c < endCol; c++) {
-        //             var rowData = mapData[row];
-        //             if (rowData) {
-        //                 var gid = rowData[col];
-        //                 if (gid) {
-        //                     var tileIndex = gid - 1;
-
-        //                     var x = c * this.tileWidth - (r % 2 !== 0 ? 0 : this.halfTileWidth);
-        //                     var y = (r - 1) * this.halfTileHeight;
-
-        //                     tilemap.addFrame(tileIndex, x, y);
-        //                 }
-        //             }
-        //             col++;
-        //             row--;
-        //         }
-
-        //         if (evenRow) {
-        //             dataCol++;
-        //         } else {
-        //             dataRow++;
-        //         }
-        //         evenRow = !evenRow;
-        //     }
-        // }
 
         this.updateCount++;
         this.restoreChangedState();

@@ -2,11 +2,13 @@ var Tiled = Tiled || {};
 
 (function(exports) {
 
+    var Collision = exports.Collision;
+    var Tileset = exports.Tileset;
     var TileLayer = exports.TileLayer;
+    var OrthogonalTileLayer = exports.OrthogonalTileLayer;
     var IsometricTileLayer = exports.IsometricTileLayer;
     var StaggeredTileLayer = exports.StaggeredTileLayer;
     var ObjectLayer = exports.ObjectLayer;
-    var Tileset = exports.Tileset;
 
     var Map = exports.Map = function(options) {
         for (var key in options) {
@@ -16,6 +18,7 @@ var Tiled = Tiled || {};
     };
 
     var proto = {
+        constructor: Map,
 
         id: null,
 
@@ -55,8 +58,6 @@ var Tiled = Tiled || {};
             var Me = this;
 
             this.initTilesets(data);
-            // TODO:
-            // this.initTerrains(data);
             this.initLayers(data);
         },
 
@@ -101,7 +102,7 @@ var Tiled = Tiled || {};
                 var layer;
                 if (layerData.type === "tilelayer") {
                     if (Me.viewType === "orthogonal") {
-                        layer = new TileLayer({
+                        layer = new OrthogonalTileLayer({
                             map: Me,
                             data: layerData,
                             tileSide: Me.tileSide,
@@ -177,6 +178,10 @@ var Tiled = Tiled || {};
             layer.viewType = this.viewType;
             layer.viewWidth = this.viewWidth;
             layer.viewHeight = this.viewHeight;
+        },
+
+        getTileLayerAt: function(index) {
+            return this.tileLayers[index] || null;
         },
 
         getTileLayer: function(name) {
