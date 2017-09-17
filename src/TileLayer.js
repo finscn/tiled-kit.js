@@ -70,7 +70,7 @@ var Tiled = Tiled || {};
             if (this.extX && !this.extCols) {
                 this.extCols = Math.ceil(this.extX / this.tileWidth);
             }
-            if (this.extY && this.extRows) {
+            if (this.extY && !this.extRows) {
                 this.extRows = Math.ceil(this.extY / this.tileHeight);
             }
 
@@ -158,7 +158,7 @@ var Tiled = Tiled || {};
         // x & y is map system
         // viewX & viewY is map system
         // viewWidth & viewHeight is map system
-        // viewWidthScaled & viewWidthScaled is screen system
+        // viewWidthScaled & viewWidthScaled is viewport system
         setViewPos: function(x, y, force) {
             var minX = this.minViewX || 0;
             var maxX = this.maxViewX === null ? this.mapWidth - this.viewWidthScaled : this.maxViewX;
@@ -210,6 +210,15 @@ var Tiled = Tiled || {};
             return true;
         },
 
+        // x & y is map system
+        scrollViewTo: function(x, y, withoutOffset) {
+            if (withoutOffset !== false) {
+                x -= this.offsetX * this.scale;
+                y -= this.offsetY * this.scale;
+            }
+            this.setViewPos(x, y);
+        },
+
         // dx & dy is map system
         scrollViewBy: function(dx, dy) {
             var x = this.viewX + dx;
@@ -217,7 +226,7 @@ var Tiled = Tiled || {};
             return this.setViewPos(x, y);
         },
 
-        // x & y is view system
+        // x & y is viewport system
         viewToMap: function(x, y) {
             return {
                 x: x,

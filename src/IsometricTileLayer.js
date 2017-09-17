@@ -41,7 +41,7 @@ var Tiled = Tiled || {};
             if (this.extX && !this.extCols) {
                 this.extCols = Math.ceil(this.extX / this.tileWidth);
             }
-            if (this.extY && this.extRows) {
+            if (this.extY && !this.extRows) {
                 this.extRows = Math.ceil(this.extY / this.tileHeight);
             }
 
