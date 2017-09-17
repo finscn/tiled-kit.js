@@ -44,8 +44,8 @@ var Tiled = Tiled || {};
         return tileTextures;
     };
 
-    Map.prototype.createTilemap = function(tileTextures) {
-        var tilemap = new PIXI.tilemap.CompositeRectTileLayer(0, tileTextures, false);
+    Map.prototype.createTilemap = function(tileTextures, texPerChild) {
+        var tilemap = new PIXI.tilemap.CompositeRectTileLayer(0, tileTextures, false, texPerChild);
 
         return tilemap;
     };
