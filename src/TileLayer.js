@@ -50,6 +50,8 @@ var Tiled = Tiled || {};
 
         extRows: 0,
         extCols: 0,
+        extX: 0,
+        extY: 0,
 
         originX: null,
         originY: null,
@@ -64,6 +66,13 @@ var Tiled = Tiled || {};
         init: function() {
             this.width = this.tileWidth * this.cols;
             this.height = this.tileHeight * this.rows;
+
+            if (this.extX && !this.extCols) {
+                this.extCols = Math.ceil(this.extX / this.tileWidth);
+            }
+            if (this.extY && this.extRows) {
+                this.extRows = Math.ceil(this.extY / this.tileHeight);
+            }
 
             this.mapWidth = this.mapCols * this.tileWidth;
             this.mapHeight = this.mapRows * this.tileHeight;

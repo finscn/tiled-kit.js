@@ -38,6 +38,13 @@ var Tiled = Tiled || {};
             this.cos = Math.cos(this.viewRotation);
             this.sin = Math.sin(this.viewRotation);
 
+            if (this.extX && !this.extCols) {
+                this.extCols = Math.ceil(this.extX / this.tileWidth);
+            }
+            if (this.extY && this.extRows) {
+                this.extRows = Math.ceil(this.extY / this.tileHeight);
+            }
+
             this.mapWidth = (this.mapCols + this.mapRows) * this.halfTileWidth;
             this.mapHeight = (this.mapCols + this.mapRows) * this.halfTileHeight;
 

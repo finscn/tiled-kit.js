@@ -6,7 +6,7 @@ var Tiled = Tiled || {};
     var IsometricTileLayer = exports.IsometricTileLayer;
     var StaggeredTileLayer = exports.StaggeredTileLayer;
     var ObjectLayer = exports.ObjectLayer;
-    var TileSet = exports.TileSet;
+    var Tileset = exports.Tileset;
 
     var Map = exports.Map = function(options) {
         for (var key in options) {
@@ -32,6 +32,9 @@ var Tiled = Tiled || {};
         tileHeight: 0,
         tileSide: 0,
 
+        extX: 0,
+        extY: 0,
+
         init: function() {
             var data = this.data;
             this.cols = data.width;
@@ -51,51 +54,38 @@ var Tiled = Tiled || {};
 
             var Me = this;
 
-            this.initTileSets(data);
+            this.initTilesets(data);
             // TODO:
             // this.initTerrains(data);
             this.initLayers(data);
         },
 
-        initTileSets: function(data) {
+        initTilesets: function(data) {
             var Me = this;
-            this.tileSetTable = {};
-            this.tileSetList = [];
+            this.tilesetTable = {};
+            this.tilesetList = [];
             this.tileTable = {};
             this.tileList = [];
+
+            var extX = 0;
+            var extY = 0;
+
             data.tilesets.forEach(function(tilesetData, idx) {
-                var tileset = new TileSet({
+                var tileset = new Tileset({
                     map: Me,
                     data: tilesetData,
                 });
-                Me.tileSetTable[tileset.name] = tileset;
-                Me.tileSetList[idx] = tileset;
+                Me.tilesetTable[tileset.name] = tileset;
+                Me.tilesetList[idx] = tileset;
 
-                var first = tileset.firstgid;
-                var count = tileset.tileCount;
-                var col = 0;
-                var row = 0;
-                for (var k = first; k < first + count; k++) {
-                    var id = k - 1;
-                    var tileInfo = {
-                        id: id,
-                        tileset: tileset.name,
-                        x: tileset.tileWidth * col,
-                        y: tileset.tileHeight * row,
-                        w: tileset.tileWidth,
-                        h: tileset.tileHeight,
-                    };
-                    Me.tileTable[id] = tileInfo;
-                    Me.tileList.push(tileInfo);
-
-                    col++;
-                    if (col >= tileset.cols) {
-                        col = 0;
-                        row++;
-                    }
-                }
+                var dw = Math.abs(tileset.tileWidth - Me.tileWidth);
+                var dh = Math.abs(tileset.tileHeight - Me.tileHeight);
+                extX = Math.max(extX, dw + Math.abs(tileset.offsetX));
+                extY = Math.max(extY, dh + Math.abs(tileset.offsetY));
             });
 
+            this.extX = this.extX || extX;
+            this.extY = this.extY || extY;
         },
 
         initLayers: function(data) {
@@ -115,18 +105,24 @@ var Tiled = Tiled || {};
                             map: Me,
                             data: layerData,
                             tileSide: Me.tileSide,
+                            extX: Me.extX,
+                            extY: Me.extY,
                         });
                     } else if (Me.viewType === "isometric") {
                         layer = new IsometricTileLayer({
                             map: Me,
                             data: layerData,
                             tileSide: Me.tileSide,
+                            extX: Me.extX,
+                            extY: Me.extY,
                         });
                     } else if (Me.viewType === "staggered") {
                         layer = new StaggeredTileLayer({
                             map: Me,
                             data: layerData,
                             tileSide: Me.tileSide,
+                            extX: Me.extX,
+                            extY: Me.extY,
                         });
                     }
 

@@ -5,12 +5,48 @@ var Tiled = Tiled || {};
 (function(exports) {
 
     var Collision = exports.Collision;
-    var TileSet = exports.TileSet;
+    var Tileset = exports.Tileset;
     var TileLayer = exports.TileLayer;
     var IsometricTileLayer = exports.IsometricTileLayer;
     var StaggeredTileLayer = exports.StaggeredTileLayer;
     var ObjectTileLayer = exports.ObjectTileLayer;
     var Map = exports.Map;
+
+    // `imgLoader` is a function that load img object by `tileset.name , tileset.image`
+    Map.prototype.createBaseTextureTable = function(imgLoader) {
+        var baseTextureTable = {};
+
+        for (var i = 0, len = this.tilesetList.length; i < len; i++) {
+            var tileset = this.tilesetList[i];
+            var name = tileset.name;
+            var image = tileset.image;
+            var baseTexture;
+            if (typeof imgLoader === 'function') {
+                baseTexture = PIXI.BaseTexture.from(imgLoader(name, image));
+            } else {
+                baseTexture = PIXI.BaseTexture.from(image);
+            }
+            baseTextureTable[name] = baseTexture;
+        }
+
+        return baseTextureTable;
+    };
+
+    // `baseTextureTable` is a table with `{ "tilesetName" : baseTexture }`
+    Map.prototype.createTilemap = function(baseTextureTable) {
+        var tileTextures = [];
+        for (var i = 0, len = this.tileList.length; i < len; i++) {
+            var t = this.tileList[i];
+            var baseTexture = baseTextureTable[t.tileset];
+            var texture = new PIXI.Texture(baseTexture,
+                new PIXI.Rectangle(t.x, t.y, t.w, t.h)
+            );
+            tileTextures.push(texture);
+        }
+        var tilemap = new PIXI.tilemap.CompositeRectTileLayer(0, tileTextures, false);
+
+        return tilemap;
+    };
 
     TileLayer.prototype.updateTilemap = function(tilemap) {
         var scale = this.scale;
