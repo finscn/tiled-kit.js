@@ -4,6 +4,7 @@ var Tiled = Tiled || {};
 
 (function(exports) {
 
+    var Utils = exports.Utils;
     var Collision = exports.Collision;
     var Tileset = exports.Tileset;
     var TileLayer = exports.TileLayer;
@@ -81,6 +82,7 @@ var Tiled = Tiled || {};
             y = viewOriginY * scale;
         }
 
+        tilemap.opacity = this.opacity;
         tilemap.pivot.set(pivotX, pivotY);
         tilemap.position.set(x, y);
         tilemap.scale.set(scale, scale);
@@ -153,6 +155,7 @@ var Tiled = Tiled || {};
             y = viewOriginY * scale;
         }
 
+        tilemap.opacity = this.opacity;
         tilemap.pivot.set(pivotX, pivotY);
         tilemap.position.set(x, y);
         tilemap.scale.set(scale, scale);
@@ -245,6 +248,7 @@ var Tiled = Tiled || {};
             y = viewOriginY * scale;
         }
 
+        tilemap.opacity = this.opacity;
         tilemap.pivot.set(pivotX, pivotY);
         tilemap.position.set(x, y);
         tilemap.scale.set(scale, scale);

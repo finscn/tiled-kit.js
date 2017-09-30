@@ -4,6 +4,7 @@ var Tiled = Tiled || {};
 
 (function(exports) {
 
+    var Utils = exports.Utils;
     var Collision = exports.Collision;
     var Tileset = exports.Tileset;
     var TileLayer = exports.TileLayer;
@@ -44,7 +45,8 @@ var Tiled = Tiled || {};
         return tileTextures;
     };
 
-    Map.prototype.createTilemap = function(tileTextures) {
+    Map.prototype.createTilemap = function(tileTextures, texPerChild, emptyTexture) {
+        // var tilemap = new PIXI.Container();
         var tilemap = new PIXI.particles.ParticleContainer(3000, {
             scale: true,
             position: true,
@@ -53,35 +55,30 @@ var Tiled = Tiled || {};
             alpha: false
         });
         tilemap.tileTextures = tileTextures;
+        tilemap.emptyTexture = emptyTexture || PIXI.Texture.EMPTY;
         return tilemap;
     };
 
-
-    Map.prototype.changeSpriteTexture = function(sprite, texture) {
-        sprite.texture = texture;
-        // sprite._texture = texture;
-        // sprite._textureID = -1;
-        // sprite.cachedTint = 0xFFFFFF;
-        // sprite._onTextureUpdate();
-    };
-
-    ////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////
-
-
-    OrthogonalTileLayer.prototype.getTileSprite = function(col, row) {
+    TileLayer.prototype.getTileSprite = function(col, row) {
         this.tileSprites = this.tileSprites || {}
+        var placeHolder = this.tilemap.tileTextures[0];
         var sprite = this.tileSprites[col + ',' + row];
         if (!sprite) {
-            sprite = new PIXI.Sprite(PIXI.Texture.EMPTY);
+            sprite = new PIXI.Sprite(placeHolder);
             this.tileSprites[col + ',' + row] = sprite;
             this.tilemap.addChild(sprite);
         }
         return sprite;
-    }
+    };
+
+    ////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
+
+
+    OrthogonalTileLayer.prototype.getTileSprite = TileLayer.prototype.getTileSprite;
 
     OrthogonalTileLayer.prototype.updateTilemap = function(tilemap) {
         var scale = this.scale;
@@ -108,6 +105,7 @@ var Tiled = Tiled || {};
             y = viewOriginY * scale;
         }
 
+        tilemap.opacity = this.opacity;
         tilemap.pivot.set(pivotX, pivotY);
         tilemap.position.set(x, y);
         tilemap.scale.set(scale, scale);
@@ -130,12 +128,16 @@ var Tiled = Tiled || {};
                 for (var c = startCol; c < endCol; c++) {
                     var sprite = this.getTileSprite(c - startCol, r - startRow);
                     if (!rowData) {
-                        this.map.changeSpriteTexture(sprite, PIXI.Texture.EMPTY)
+                        if (tilemap.emptyTexture) {
+                            sprite.texture = tilemap.emptyTexture;
+                        }
                         continue;
                     }
                     var gid = rowData[c];
                     if (!gid || gid === 0) {
-                        this.map.changeSpriteTexture(sprite, PIXI.Texture.EMPTY)
+                        if (tilemap.emptyTexture) {
+                            sprite.texture = tilemap.emptyTexture;
+                        }
                         continue;
                     }
                     var tileIndex = gid - 1;
@@ -144,7 +146,7 @@ var Tiled = Tiled || {};
                     var t = tileTable[gid];
                     // console.log(tileIndex, tilemap.tileTextures)
                     var texture = tilemap.tileTextures[tileIndex];
-                    this.map.changeSpriteTexture(sprite, texture)
+                    sprite.texture = texture;
                     sprite.position.set(x + t.ox, y + t.oy);
                 }
             }
@@ -163,17 +165,7 @@ var Tiled = Tiled || {};
     ////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////
 
-
-    IsometricTileLayer.prototype.getTileSprite = function(col, row) {
-        this.tileSprites = this.tileSprites || {}
-        var sprite = this.tileSprites[col + ',' + row];
-        if (!sprite) {
-            sprite = new PIXI.Sprite(PIXI.Texture.EMPTY);
-            this.tileSprites[col + ',' + row] = sprite;
-            this.tilemap.addChild(sprite);
-        }
-        return sprite;
-    }
+    IsometricTileLayer.prototype.getTileSprite = TileLayer.prototype.getTileSprite;
 
     IsometricTileLayer.prototype.updateTilemap = function(tilemap) {
         var scale = this.scale;
@@ -200,6 +192,7 @@ var Tiled = Tiled || {};
             y = viewOriginY * scale;
         }
 
+        tilemap.opacity = this.opacity;
         tilemap.pivot.set(pivotX, pivotY);
         tilemap.position.set(x, y);
         tilemap.scale.set(scale, scale);
@@ -240,13 +233,17 @@ var Tiled = Tiled || {};
                             var t = tileTable[gid];
 
                             var texture = tilemap.tileTextures[tileIndex];
-                            this.map.changeSpriteTexture(sprite, texture)
+                            sprite.texture = texture;
                             sprite.position.set(x + t.ox, y + t.oy);
                         } else {
-                            this.map.changeSpriteTexture(sprite, PIXI.Texture.EMPTY);
+                            if (tilemap.emptyTexture) {
+                                sprite.texture = tilemap.emptyTexture;
+                            }
                         }
                     } else {
-                        this.map.changeSpriteTexture(sprite, PIXI.Texture.EMPTY);
+                        if (tilemap.emptyTexture) {
+                            sprite.texture = tilemap.emptyTexture;
+                        }
                     }
                     col++;
                     row--;
@@ -273,17 +270,7 @@ var Tiled = Tiled || {};
     ////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////
 
-
-    StaggeredTileLayer.prototype.getTileSprite = function(col, row) {
-        this.tileSprites = this.tileSprites || {}
-        var sprite = this.tileSprites[col + ',' + row];
-        if (!sprite) {
-            sprite = new PIXI.Sprite(PIXI.Texture.EMPTY);
-            this.tileSprites[col + ',' + row] = sprite;
-            this.tilemap.addChild(sprite);
-        }
-        return sprite;
-    }
+    StaggeredTileLayer.prototype.getTileSprite = TileLayer.prototype.getTileSprite;
 
     StaggeredTileLayer.prototype.updateTilemap = function(tilemap) {
         var scale = this.scale;
@@ -310,6 +297,7 @@ var Tiled = Tiled || {};
             y = viewOriginY * scale;
         }
 
+        tilemap.opacity = this.opacity;
         tilemap.pivot.set(pivotX, pivotY);
         tilemap.position.set(x, y);
         tilemap.scale.set(scale, scale);
@@ -337,12 +325,16 @@ var Tiled = Tiled || {};
                 for (var c = startCol; c < endCol; c++) {
                     var sprite = this.getTileSprite(c - startCol, r - startRow);
                     if (!rowData) {
-                        this.map.changeSpriteTexture(sprite, PIXI.Texture.EMPTY)
+                        if (tilemap.emptyTexture) {
+                            sprite.texture = tilemap.emptyTexture;
+                        }
                         continue;
                     }
                     var gid = rowData[c];
                     if (!gid || gid === 0) {
-                        this.map.changeSpriteTexture(sprite, PIXI.Texture.EMPTY)
+                        if (tilemap.emptyTexture) {
+                            sprite.texture = tilemap.emptyTexture;
+                        }
                         continue;
                     }
                     var tileIndex = gid - 1;
@@ -351,7 +343,7 @@ var Tiled = Tiled || {};
                     var t = tileTable[gid];
 
                     var texture = tilemap.tileTextures[tileIndex];
-                    this.map.changeSpriteTexture(sprite, texture)
+                    sprite.texture = texture;
                     sprite.position.set(x + t.ox, y + t.oy);
                 }
                 evenRow = !evenRow;
