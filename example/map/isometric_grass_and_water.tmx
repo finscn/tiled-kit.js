@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.0.3" orientation="isometric" renderorder="right-down" width="4" height="4" tilewidth="512" tileheight="256" nextobjectid="1">
+ <tileset firstgid="1" name="isometric_grass_and_water" tilewidth="512" tileheight="512" tilecount="16" columns="4">
+  <image source="isometric_grass_and_water.png" width="2048" height="2048"/>
+ </tileset>
+ <layer name="Tile Layer 1" width="4" height="4">
+  <data encoding="csv">
+9,15,15,12,
+14,1,2,16,
+14,4,3,16,
+10,13,13,9
+</data>
+ </layer>
+</map>

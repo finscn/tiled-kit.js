@@ -1,5 +1,9 @@
 function start() {
-    initTiledMap("perspective_walls");
+    var baseTexture = PIXI.BaseTexture.from(ImagePool["perspective_walls"]);
+    var emptyTexture = new PIXI.Texture(baseTexture,
+        new PIXI.Rectangle(192, 192, 64, 64)
+    );
+    initTiledMap("perspective_walls",emptyTexture);
 }
 
 function updateTiledMap(timeStep, now) {
