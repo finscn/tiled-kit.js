@@ -91,11 +91,13 @@ var PIXI;
                     }
                     texture = layer.textures[ind];
                 }
-                else if (typeof texture_ === "string") {
-                    texture = PIXI.Texture.fromImage(texture_);
-                }
                 else {
-                    texture = texture_;
+                    if (typeof texture_ === "string") {
+                        texture = PIXI.Texture.fromImage(texture_);
+                    }
+                    else {
+                        texture = texture_;
+                    }
                     for (var i = 0; i < children.length; i++) {
                         var child = children[i];
                         var tex = child.textures;
@@ -651,9 +653,6 @@ var PIXI;
             };
             TileRenderer.prototype.initBounds = function () {
                 var gl = this.renderer.gl;
-                var tempCanvas = document.createElement('canvas');
-                tempCanvas.width = 2048;
-                tempCanvas.height = 2048;
                 for (var i = 0; i < this.maxTextures; i++) {
                     var rt = PIXI.RenderTexture.create(2048, 2048);
                     rt.baseTexture.premultipliedAlpha = true;
@@ -661,19 +660,16 @@ var PIXI;
                     rt.baseTexture.wrapMode = PIXI.WRAP_MODES.CLAMP;
                     this.renderer.textureManager.updateTexture(rt);
                     this.glTextures.push(rt);
-                    var bs = [];
+                    var bounds = this.boundSprites;
                     for (var j = 0; j < 4; j++) {
                         var spr = new PIXI.Sprite();
                         spr.position.x = 1024 * (j & 1);
                         spr.position.y = 1024 * (j >> 1);
-                        bs.push(spr);
+                        bounds.push(spr);
                     }
-                    this.boundSprites.push(bs);
                 }
             };
             TileRenderer.prototype.bindTextures = function (renderer, shader, textures) {
-                var bounds = this.boundSprites;
-                var glts = this.glTextures;
                 var len = textures.length;
                 var maxTextures = this.maxTextures;
                 if (len > 4 * maxTextures) {
@@ -683,12 +679,14 @@ var PIXI;
                 if (doClear && !this._clearBuffer) {
                     this._clearBuffer = new Uint8Array(1024 * 1024 * 4);
                 }
+                var glts = this.glTextures;
+                var bounds = this.boundSprites;
                 var i;
                 for (i = 0; i < len; i++) {
                     var texture = textures[i];
                     if (!texture || !textures[i].valid)
                         continue;
-                    var bs = bounds[i >> 2][i & 3];
+                    var bs = bounds[i];
                     if (!bs.texture ||
                         bs.texture.baseTexture !== texture.baseTexture) {
                         bs.texture = texture;
