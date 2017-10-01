@@ -259,38 +259,6 @@ var PIXI;
                 this.modificationMarker = 0;
                 this.hasAnim = false;
             };
-            RectTileLayer.prototype.addFrame = function (texture_, x, y, animX, animY) {
-                var textureId = null;
-                var texture;
-                var tex = this.textures;
-                if (typeof texture_ === "number") {
-                    textureId = texture_;
-                    texture = tex[textureId];
-                }
-                else {
-                    if (typeof texture_ === "string") {
-                        texture = PIXI.Texture.fromImage(texture_);
-                    }
-                    else {
-                        texture = texture_;
-                    }
-                    for (var j = 0; j < tex.length; j++) {
-                        if (tex[j].baseTexture === texture.baseTexture) {
-                            textureId = j;
-                            break;
-                        }
-                    }
-                    if (textureId === null && texture) {
-                        textureId = this.textures.length;
-                        this.textures.push(texture);
-                    }
-                }
-                if (!texture) {
-                    return false;
-                }
-                this.addRect(textureId, texture.frame.x, texture.frame.y, x, y, texture.frame.width, texture.frame.height, animX, animY);
-            };
-            ;
             RectTileLayer.prototype.addRect = function (textureId, u, v, x, y, tileWidth, tileHeight, animX, animY) {
                 if (animX === void 0) { animX = 0; }
                 if (animY === void 0) { animY = 0; }
@@ -348,7 +316,6 @@ var PIXI;
                     }
                 }
             };
-            ;
             RectTileLayer.prototype.renderCanvas = function (renderer) {
                 if (this.textures.length === 0)
                     return;
@@ -372,7 +339,6 @@ var PIXI;
                     }
                 }
             };
-            ;
             RectTileLayer.prototype.renderWebGL = function (renderer) {
                 var points = this.pointsBuf;
                 if (points.length === 0)
