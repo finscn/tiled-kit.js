@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.0.3" orientation="isometric" renderorder="right-down" width="25" height="25" tilewidth="64" tileheight="32" nextobjectid="1">
+ <tileset firstgid="1" name="isometric_grass_and_water" tilewidth="64" tileheight="64" tilecount="24" columns="4">
+  <tileoffset x="0" y="16"/>
+  <grid orientation="isometric" width="64" height="32"/>
+  <image source="isometric_grass_and_water.png" width="256" height="384"/>
+  <terraintypes>
+   <terrain name="Grass" tile="0"/>
+   <terrain name="Water" tile="22"/>
+   <terrain name="New Terrain" tile="19"/>
+  </terraintypes>
+  <tile id="0" terrain="0,0,0,0"/>
+  <tile id="1" terrain="0,0,0,0"/>
+  <tile id="2" terrain="1,0,0,0"/>
+  <tile id="3" terrain="0,0,0,0"/>
+  <tile id="4" terrain="0,0,0,1"/>
+  <tile id="5" terrain="0,0,1,0"/>
+  <tile id="6" terrain="1,0,0,0"/>
+  <tile id="7" terrain="0,1,0,0"/>
+  <tile id="8" terrain="0,1,1,1"/>
+  <tile id="9" terrain="1,0,1,1"/>
+  <tile id="10" terrain="1,1,1,0"/>
+  <tile id="11" terrain="1,1,0,1"/>
+  <tile id="12" terrain="0,0,1,1"/>
+  <tile id="13" terrain="1,0,1,0"/>
+  <tile id="14" terrain="1,1,0,0"/>
+  <tile id="15" terrain="0,1,0,1"/>
+  <tile id="16" terrain="0,0,1,1"/>
+  <tile id="17" terrain="1,0,1,0"/>
+  <tile id="18" terrain="1,1,0,0"/>
+  <tile id="19" terrain="0,1,0,0"/>
+  <tile id="20" terrain="0,1,1,0"/>
+  <tile id="21" terrain="1,0,0,1"/>
+  <tile id="22" terrain="1,1,1,1"/>
+  <tile id="23" terrain="0,0,0,0"/>
+ </tileset>
+ <layer name="Tile Layer 1" width="25" height="25">
+  <data encoding="base64" compression="zlib">
+   eJx1luGSgjAMhNOCenp3qMAp7/+kBzPZ8WOtPzJY2maTzSZ4iIhn2vdqU9pPvlvSymqn1Wratu6x7nLd516H30/YkHvb+6/EEcZo9/Vs+Ra+9rbYr2kn25+Rn3JwjB7nPSedHxtntFYuI95rj/GSO+YkGxr8+u/NDqvdVzsCo4s9J4yV7y95z2Mp5qNkTn6e9ik+1bMYfpexH/P5u9oZtaFuvD7ktU+MAXvyW7Mej/QtHXse8s975G5bT4hLmj0hRmpYGr9YbXiPmtYeOaL2WIvZMGSj3fF6FsMU50fgirsz/C54DsZXqy9Zn1uD7z5efUj/xKjmR3WhHvWc472u7EPninmo/sqZfc1c5Ev3eU45LrHnSppXnLd451D5FcOhnqWZq+XjM6wmxhPYip/6Ec4U+zmuOgrL9U5tOIecg64770eeY1ycAf4d4CzgTKh2j98U8isN/cXrm7aAQ8/De5MaG2OvDfaCeps9RB1Q063ak3fXPXvhDv9bDo949bLz498gn9OcY8pHWqXOqC3vf/LHeUAuXYfK9wp86pI1r7b2eUPNOZbPVM463vX6cwbzjn/DauM3fZOrEu8abmF++t/jvLr+/gFCURDm
+  </data>
+ </layer>
+ <layer name="Tile Layer 2" width="25" height="25" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJztwQEJAAAAAqD6f7odgdoAAPBmE4gAAg==
+  </data>
+ </layer>
+</map>
