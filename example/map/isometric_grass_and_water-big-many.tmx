@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.0.3" orientation="isometric" renderorder="right-down" width="10" height="10" tilewidth="64" tileheight="32" nextobjectid="1">
+ <tileset firstgid="1" name="isometric_grass_and_water-big-many" tilewidth="64" tileheight="64" tilecount="384" columns="16">
+  <image source="isometric_grass_and_water-big-many.png" width="1024" height="1536"/>
+ </tileset>
+ <layer name="Tile Layer 1" width="10" height="10">
+  <data encoding="csv">
+317,376,376,9,376,376,376,376,376,334,
+376,376,376,376,376,376,376,376,376,376,
+376,376,304,304,304,304,304,304,368,376,
+1,376,304,380,380,380,375,304,368,376,
+376,376,304,380,380,380,375,304,376,376,
+376,376,304,380,380,380,375,304,376,376,
+376,376,304,380,380,380,375,304,376,109,
+376,376,353,353,304,304,304,304,376,376,
+376,376,376,376,376,376,376,376,376,376,
+336,376,376,376,376,376,97,376,376,311
+</data>
+ </layer>
+</map>
