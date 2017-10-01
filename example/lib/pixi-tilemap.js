@@ -67,9 +67,11 @@ var PIXI;
                     this.children[i].clear();
                 this.modificationMarker = 0;
             };
-            CompositeRectTileLayer.prototype.addRect = function (num, u, v, x, y, tileWidth, tileHeight) {
-                if (this.children[num] && this.children[num].textures)
-                    this.children[num].addRect(0, u, v, x, y, tileWidth, tileHeight);
+            CompositeRectTileLayer.prototype.addRect = function (textureIndex, u, v, x, y, tileWidth, tileHeight) {
+                var childIndex = textureIndex / this.texPerChild >> 0;
+                var textureId = textureIndex % this.texPerChild;
+                if (this.children[childIndex] && this.children[childIndex].textures)
+                    this.children[childIndex].addRect(textureId, u, v, x, y, tileWidth, tileHeight);
             };
             CompositeRectTileLayer.prototype.addFrame = function (texture_, x, y, animX, animY) {
                 var texture;
@@ -370,6 +372,7 @@ var PIXI;
                     }
                 }
             };
+            ;
             RectTileLayer.prototype.renderWebGL = function (renderer) {
                 var points = this.pointsBuf;
                 if (points.length === 0)
