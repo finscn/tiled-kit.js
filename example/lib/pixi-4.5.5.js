@@ -184,13 +184,13 @@ exports.interleave3 = function(x, y, z) {
   y  = (y | (y<<4))  & 3272356035;
   y  = (y | (y<<2))  & 1227133513;
   x |= (y << 1);
-  
+
   z &= 0x3FF;
   z  = (z | (z<<16)) & 4278190335;
   z  = (z | (z<<8))  & 251719695;
   z  = (z | (z<<4))  & 3272356035;
   z  = (z | (z<<2))  & 1227133513;
-  
+
   return x | (z << 2);
 }
 
@@ -2455,7 +2455,7 @@ VertexArrayObject.prototype.getSize = function()
  */
 var createContext = function(canvas, options)
 {
-    var gl = canvas.getContext('webgl', options) || 
+    var gl = canvas.getContext('webgl', options) ||
          canvas.getContext('experimental-webgl', options);
 
     if (!gl)
@@ -2642,36 +2642,36 @@ module.exports = compileProgram;
  * @param type {String} Type of value
  * @param size {Number}
  */
-var defaultValue = function(type, size) 
+var defaultValue = function(type, size)
 {
     switch (type)
     {
         case 'float':
             return 0;
 
-        case 'vec2': 
+        case 'vec2':
             return new Float32Array(2 * size);
 
         case 'vec3':
             return new Float32Array(3 * size);
 
-        case 'vec4':     
+        case 'vec4':
             return new Float32Array(4 * size);
-            
+
         case 'int':
         case 'sampler2D':
             return 0;
 
-        case 'ivec2':   
+        case 'ivec2':
             return new Int32Array(2 * size);
 
         case 'ivec3':
             return new Int32Array(3 * size);
 
-        case 'ivec4': 
+        case 'ivec4':
             return new Int32Array(4 * size);
 
-        case 'bool':     
+        case 'bool':
             return false;
 
         case 'bvec2':
@@ -2688,7 +2688,7 @@ var defaultValue = function(type, size)
             return new Float32Array([1, 0,
                                      0, 1]);
 
-        case 'mat3': 
+        case 'mat3':
             return new Float32Array([1, 0, 0,
                                      0, 1, 0,
                                      0, 0, 1]);
@@ -2705,7 +2705,7 @@ var booleanArray = function(size)
 {
     var array = new Array(size);
 
-    for (var i = 0; i < array.length; i++) 
+    for (var i = 0; i < array.length; i++)
     {
         array[i] = false;
     }
@@ -2956,8 +2956,8 @@ module.exports = {
  * @param type {String}
  * @return {Number}
  */
-var mapSize = function(type) 
-{ 
+var mapSize = function(type)
+{
     return GLSL_TO_SIZE[type];
 };
 
@@ -2990,15 +2990,15 @@ module.exports = mapSize;
 },{}],21:[function(require,module,exports){
 
 
-var mapSize = function(gl, type) 
+var mapSize = function(gl, type)
 {
-    if(!GL_TABLE) 
+    if(!GL_TABLE)
     {
         var typeNames = Object.keys(GL_TO_GLSL_TYPES);
 
         GL_TABLE = {};
 
-        for(var i = 0; i < typeNames.length; ++i) 
+        for(var i = 0; i < typeNames.length; ++i)
         {
             var tn = typeNames[i];
             GL_TABLE[ gl[tn] ] = GL_TO_GLSL_TYPES[tn];
@@ -3020,17 +3020,17 @@ var GL_TO_GLSL_TYPES = {
   'INT_VEC2':    'ivec2',
   'INT_VEC3':    'ivec3',
   'INT_VEC4':    'ivec4',
-  
+
   'BOOL':        'bool',
   'BOOL_VEC2':   'bvec2',
   'BOOL_VEC3':   'bvec3',
   'BOOL_VEC4':   'bvec4',
-  
+
   'FLOAT_MAT2':  'mat2',
   'FLOAT_MAT3':  'mat3',
   'FLOAT_MAT4':  'mat4',
-  
-  'SAMPLER_2D':  'sampler2D'  
+
+  'SAMPLER_2D':  'sampler2D'
 };
 
 module.exports = mapSize;
@@ -9293,7 +9293,6 @@ var Container = function (_DisplayObject) {
 
         for (var i = 0, j = this.children.length; i < j; ++i) {
             var child = this.children[i];
-
             if (child.visible) {
                 child.updateTransform();
             }
@@ -10383,7 +10382,6 @@ var Transform = function (_TransformBase) {
 
   Transform.prototype.updateTransform = function updateTransform(parentTransform) {
     var lt = this.localTransform;
-
     lt.a = this._cx * this.scale.x;
     lt.b = this._sx * this.scale.x;
     lt.c = this._cy * this.scale.y;
@@ -10403,6 +10401,7 @@ var Transform = function (_TransformBase) {
     wt.tx = lt.tx * pt.a + lt.ty * pt.c + pt.tx;
     wt.ty = lt.tx * pt.b + lt.ty * pt.d + pt.ty;
 
+console.log(lt.tx, wt.tx)
     this._worldID++;
   };
 

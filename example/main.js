@@ -51,6 +51,7 @@ function initTiledMap(name, emptyTexture) {
         tileLayer.init();
 
         tileLayer.tilemap = game.tiledMap.createTilemap(tileTextures, 32, emptyTexture);
+        tileLayer.tilemap.id="ttt";
         container.addChild(tileLayer.tilemap);
     });
     game.tileLayers = game.tiledMap.tileLayers;
