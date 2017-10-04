@@ -823,7 +823,9 @@ var PIXI;
         var SimpleTileRenderer = (function (_super) {
             __extends(SimpleTileRenderer, _super);
             function SimpleTileRenderer(renderer) {
-                return _super.call(this, renderer) || this;
+                var _this = _super.call(this, renderer) || this;
+                _this.samplerSize = [];
+                return _this;
             }
             SimpleTileRenderer.prototype.onContextChange = function () {
                 var gl = this.renderer.gl;
@@ -837,16 +839,15 @@ var PIXI;
                 var i;
                 for (i = 0; i < len; i++) {
                     var texture = textures[i];
-                    if (!texture || !texture.valid)
+                    if (!texture || !texture.valid) {
                         continue;
-                    this.texLoc.length = 0;
+                    }
                     var baseTexture = texture.baseTexture;
-                    this.texLoc.push(renderer.bindTexture(baseTexture, 0, true));
+                    this.texLoc[0] = renderer.bindTexture(baseTexture, 0, true);
                     shader.uniforms.uSamplers = this.texLoc;
-                    shader.uniforms.uSamplerSize = [
-                        1.0 / baseTexture.width,
-                        1.0 / baseTexture.height
-                    ];
+                    this.samplerSize[0] = 1.0 / baseTexture.width;
+                    this.samplerSize[1] = 1.0 / baseTexture.height;
+                    shader.uniforms.uSamplerSize = this.samplerSize;
                     break;
                 }
             };
