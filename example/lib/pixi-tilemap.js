@@ -842,11 +842,10 @@ var PIXI;
                     if (!texture || !texture.valid) {
                         continue;
                     }
-                    var baseTexture = texture.baseTexture;
-                    this.texLoc[0] = renderer.bindTexture(baseTexture, 0, true);
+                    this.texLoc[0] = renderer.bindTexture(texture, 0, true);
                     shader.uniforms.uSamplers = this.texLoc;
-                    this.samplerSize[0] = 1.0 / baseTexture.width;
-                    this.samplerSize[1] = 1.0 / baseTexture.height;
+                    this.samplerSize[0] = 1.0 / texture.baseTexture.width;
+                    this.samplerSize[1] = 1.0 / texture.baseTexture.height;
                     shader.uniforms.uSamplerSize = this.samplerSize;
                     break;
                 }

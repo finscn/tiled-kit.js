@@ -23,8 +23,9 @@ var app = new PIXI.Application(game.width, game.height, {
 });
 document.body.appendChild(app.view);
 
-var container = new PIXI.Container();
-app.stage.addChild(container);
+var mapContainer = new PIXI.Container();
+app.stage.addChild(mapContainer);
+
 var tileBorder = new PIXI.Graphics();
 var origin = new PIXI.Graphics();
 
@@ -52,7 +53,7 @@ function initTiledMap(name, emptyTexture) {
 
         tileLayer.tilemap = game.tiledMap.createTilemap(tileTextures, 32, emptyTexture);
         tileLayer.tilemap.id="ttt";
-        container.addChild(tileLayer.tilemap);
+        mapContainer.addChild(tileLayer.tilemap);
     });
     game.tileLayers = game.tiledMap.tileLayers;
 }
@@ -115,9 +116,9 @@ function initFlag() {
         drawTileBorder(tileLayer, tileInfo);
     });
 
-    container.addChild(tileBorder);
-    container.addChild(origin);
-    container.addChild(sprite);
+    mapContainer.addChild(tileBorder);
+    mapContainer.addChild(origin);
+    mapContainer.addChild(sprite);
 }
 
 var origin;
