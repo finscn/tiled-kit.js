@@ -2,14 +2,16 @@ var sprite2d;
 var quad = [
     new PIXI.Point(0, 0),
     new PIXI.Point(game.width, 0),
-    new PIXI.Point(game.width + 200 * 1.5, game.height + 100),
-    new PIXI.Point(0 - 200 * 1.5, game.height + 100)
+    new PIXI.Point(game.width + 200 * 1.65, game.height + 100),
+    new PIXI.Point(0 - 200 * 1.65, game.height + 100)
 ];
 var tex;
 
+var changed = true;
 function start() {
 
     initTiledMap("isometric_grass_and_water");
+    // initTiledMap("sewers");
 
     tex = PIXI.RenderTexture.create(game.width, game.height);
 
@@ -47,6 +49,9 @@ function updateTiledMap(timeStep, now) {
     app.renderer.render(mapContainer, tex);
     mapContainer.visible = false;
 
-    sprite2d.position.set(0, 0);
-    sprite2d.proj.mapSprite(sprite2d, quad);
+    if (changed) {
+        changed = false;
+        sprite2d.position.set(0, 0);
+        sprite2d.proj.mapSprite(sprite2d, quad);
+    }
 }
