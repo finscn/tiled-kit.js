@@ -1,21 +1,21 @@
 var Tiled = Tiled || {};
 
-// pixi.js & ParticleContainer
+// pixi-particlecontainer
 
 (function(exports) {
 
-    var Utils = exports.Utils;
-    var Collision = exports.Collision;
-    var Tileset = exports.Tileset;
-    var TileLayer = exports.TileLayer;
-    var OrthogonalTileLayer = exports.OrthogonalTileLayer;
-    var IsometricTileLayer = exports.IsometricTileLayer;
-    var StaggeredTileLayer = exports.StaggeredTileLayer;
-    var ObjectLayer = exports.ObjectLayer;
-    var Map = exports.Map;
+    var plugin = {
+        name: "pixi-particlecontainer"
+    };
+    Tiled.Plugins[plugin.name] = plugin;
+
+    plugin.Map = {};
+    plugin.OrthogonalTileLayer = {};
+    plugin.IsometricTileLayer = {};
+    plugin.StaggeredTileLayer = {};
 
     // `imgLoader` is a function that load img object by `tileset.name , tileset.image`
-    Map.prototype.createTileTextures = function(imgLoader) {
+    plugin.Map.createTileTextures = function(imgLoader) {
         var baseTextureTable = {};
 
         for (var i = 0, len = this.tilesetList.length; i < len; i++) {
@@ -45,7 +45,7 @@ var Tiled = Tiled || {};
         return tileTextures;
     };
 
-    Map.prototype.createTilemap = function(tileTextures, texPerChild, emptyTexture) {
+    plugin.Map.createTilemap = function(tileTextures, texPerChild, emptyTexture) {
         // var tilemap = new PIXI.Container();
         var tilemap = new PIXI.particles.ParticleContainer(3000, {
             scale: true,
@@ -56,17 +56,30 @@ var Tiled = Tiled || {};
         });
         tilemap.tileTextures = tileTextures;
         tilemap.emptyTexture = emptyTexture || PIXI.Texture.EMPTY;
+
+        if (this.updateTilemap) {
+            this.updateTilemap(tilemap);
+        }
+
         return tilemap;
     };
 
-    TileLayer.prototype.getTileSprite = function(col, row) {
+    ////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
+
+    var createTilemap = plugin.Map.createTilemap;
+
+    var getTileSprite = function(tilemap, col, row) {
         this.tileSprites = this.tileSprites || {}
-        var placeHolder = this.tilemap.tileTextures[0];
+        var placeHolder = tilemap.tileTextures[0];
         var sprite = this.tileSprites[col + ',' + row];
         if (!sprite) {
             sprite = new PIXI.Sprite(placeHolder);
             this.tileSprites[col + ',' + row] = sprite;
-            this.tilemap.addChild(sprite);
+            tilemap.addChild(sprite);
         }
         return sprite;
     };
@@ -78,9 +91,10 @@ var Tiled = Tiled || {};
     ////////////////////////////////////////////////////////////////////////
 
 
-    OrthogonalTileLayer.prototype.getTileSprite = TileLayer.prototype.getTileSprite;
+    plugin.OrthogonalTileLayer.createTilemap = createTilemap;
+    plugin.OrthogonalTileLayer.getTileSprite = getTileSprite;
 
-    OrthogonalTileLayer.prototype.updateTilemap = function(tilemap) {
+    plugin.OrthogonalTileLayer.updateTilemap = function(tilemap) {
         var scale = this.scale;
 
         var pivotX, pivotY;
@@ -126,7 +140,7 @@ var Tiled = Tiled || {};
             for (var r = startRow; r < endRow; r++) {
                 var rowData = mapData[r];
                 for (var c = startCol; c < endCol; c++) {
-                    var sprite = this.getTileSprite(c - startCol, r - startRow);
+                    var sprite = this.getTileSprite(tilemap, c - startCol, r - startRow);
                     if (!rowData) {
                         if (tilemap.emptyTexture) {
                             sprite.texture = tilemap.emptyTexture;
@@ -165,9 +179,10 @@ var Tiled = Tiled || {};
     ////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////
 
-    IsometricTileLayer.prototype.getTileSprite = TileLayer.prototype.getTileSprite;
+    plugin.IsometricTileLayer.createTilemap = createTilemap;
+    plugin.IsometricTileLayer.getTileSprite = getTileSprite;
 
-    IsometricTileLayer.prototype.updateTilemap = function(tilemap) {
+    plugin.IsometricTileLayer.updateTilemap = function(tilemap) {
         var scale = this.scale;
 
         var pivotX, pivotY;
@@ -222,7 +237,7 @@ var Tiled = Tiled || {};
                 var row = dataRow;
                 var offsetX = evenRow ? -halfTileWidth : 0;
                 for (var c = startCol; c < endCol; c++) {
-                    var sprite = this.getTileSprite(c - startCol, r - startRow);
+                    var sprite = this.getTileSprite(tilemap, c - startCol, r - startRow);
                     var rowData = mapData[row];
                     if (rowData) {
                         var gid = rowData[col];
@@ -270,9 +285,10 @@ var Tiled = Tiled || {};
     ////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////
 
-    StaggeredTileLayer.prototype.getTileSprite = TileLayer.prototype.getTileSprite;
+    plugin.StaggeredTileLayer.createTilemap = createTilemap;
+    plugin.StaggeredTileLayer.getTileSprite = getTileSprite;
 
-    StaggeredTileLayer.prototype.updateTilemap = function(tilemap) {
+    plugin.StaggeredTileLayer.updateTilemap = function(tilemap) {
         var scale = this.scale;
 
         var pivotX, pivotY;
@@ -323,7 +339,7 @@ var Tiled = Tiled || {};
                 var rowData = mapData[r];
                 var offsetX = evenRow ? -halfTileWidth : 0;
                 for (var c = startCol; c < endCol; c++) {
-                    var sprite = this.getTileSprite(c - startCol, r - startRow);
+                    var sprite = this.getTileSprite(tilemap, c - startCol, r - startRow);
                     if (!rowData) {
                         if (tilemap.emptyTexture) {
                             sprite.texture = tilemap.emptyTexture;

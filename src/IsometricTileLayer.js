@@ -10,9 +10,12 @@ var Tiled = Tiled || {};
     // the `view` is viewport.
     // the `screen` is not physical screen.
 
-    var IsometricTileLayer = exports.IsometricTileLayer = function(options) {
+    var IsometricTileLayer = exports.IsometricTileLayer = function(options, plugin) {
         for (var key in options) {
             this[key] = options[key];
+        }
+        for (var key in plugin) {
+            this[key] = plugin[key];
         }
         this.initBaseData();
     };

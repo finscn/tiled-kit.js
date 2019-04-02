@@ -8,9 +8,12 @@ var Tiled = Tiled || {};
     var TileLayer = exports.TileLayer;
     var IsometricTileLayer = exports.IsometricTileLayer;
 
-    var StaggeredTileLayer = exports.StaggeredTileLayer = function(options) {
+    var StaggeredTileLayer = exports.StaggeredTileLayer = function(options, plugin) {
         for (var key in options) {
             this[key] = options[key];
+        }
+        for (var key in plugin) {
+            this[key] = plugin[key];
         }
         this.initBaseData();
     };

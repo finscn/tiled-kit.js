@@ -61,6 +61,7 @@ var allInOneFileName = 'tiled-kit.js';
 var minFileName = 'tiled-kit.min.js';
 
 var jsFileList = [
+    "Tiled.js",
     "Utils.js",
     "Collision.js",
     "Tileset.js",
@@ -71,6 +72,7 @@ var jsFileList = [
     "ObjectLayer.js",
     "Map.js",
     "extension/canvas2d.js",
+    "extension/pixi-particlecontainer.js",
     "extension/pixi-tilemap.js",
 ];
 

@@ -33,6 +33,7 @@ var origin = new PIXI.Graphics();
 function initTiledMap(name, emptyTexture) {
 
     game.tiledMap = new Tiled.Map({
+        plugin: "pixi-tilemap",
         viewWidth: game.width,
         viewHeight: game.height,
         data: TileMaps[name],
@@ -51,7 +52,7 @@ function initTiledMap(name, emptyTexture) {
         tileLayer.maxScale = Infinity;
         tileLayer.init();
 
-        tileLayer.tilemap = game.tiledMap.createTilemap(tileTextures, 32, emptyTexture);
+        tileLayer.tilemap = tileLayer.createTilemap(tileTextures, 32, emptyTexture);
         tileLayer.tilemap.id="ttt";
         mapContainer.addChild(tileLayer.tilemap);
     });

@@ -15,6 +15,9 @@ var Tiled = Tiled || {};
         for (var key in options) {
             this[key] = options[key];
         }
+
+        this.initPlugin();
+
         this.init();
     };
 
@@ -39,6 +42,8 @@ var Tiled = Tiled || {};
         extX: 0,
         extY: 0,
 
+        plugin: null,
+
         init: function() {
             var data = this.data;
             this.cols = data.width;
@@ -56,10 +61,29 @@ var Tiled = Tiled || {};
                 this.height = this.tileHeight * this.gridSize;
             }
 
-            var Me = this;
-
             this.initTilesets(data);
             this.initLayers(data);
+        },
+
+        initPlugin: function() {
+            var pluginName = this.pluginName;
+
+            if (typeof this.plugin === "string") {
+                pluginName = this.plugin;
+            }
+
+            if (pluginName){
+                this.plugin = Tiled.Plugins[pluginName];
+            }
+
+            if (!this.plugin) {
+                throw new Error("No Plugin is named `" + this.plugin + "`");
+            }
+
+            var pluginMap = this.plugin.Map;
+            for (var key in pluginMap) {
+                this[key] = pluginMap[key];
+            }
         },
 
         initTilesets: function(data) {
@@ -111,7 +135,7 @@ var Tiled = Tiled || {};
                             tileSide: Me.tileSide,
                             extX: Me.extX,
                             extY: Me.extY,
-                        });
+                        }, Me.plugin.OrthogonalTileLayer);
                     } else if (Me.viewType === "isometric") {
                         layer = new IsometricTileLayer({
                             map: Me,
@@ -119,7 +143,7 @@ var Tiled = Tiled || {};
                             tileSide: Me.tileSide,
                             extX: Me.extX,
                             extY: Me.extY,
-                        });
+                        }, Me.plugin.IsometricTileLayer);
                     } else if (Me.viewType === "staggered") {
                         layer = new StaggeredTileLayer({
                             map: Me,
@@ -127,7 +151,7 @@ var Tiled = Tiled || {};
                             tileSide: Me.tileSide,
                             extX: Me.extX,
                             extY: Me.extY,
-                        });
+                        }, Me.plugin.StaggeredTileLayer);
                     }
 
                     if (layer) {
@@ -137,7 +161,7 @@ var Tiled = Tiled || {};
                     layer = new ObjectLayer({
                         map: Me,
                         data: layerData
-                    });
+                    }, Me.plugin.ObjectLayer);
                     Me.objectLayers.push(layer);
                 }
                 // TODO
@@ -172,6 +196,10 @@ var Tiled = Tiled || {};
                 }
             }
             return null;
+        },
+
+        createTilemap: function() {
+
         },
     };
 

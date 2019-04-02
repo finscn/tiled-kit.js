@@ -7,9 +7,12 @@ var Tiled = Tiled || {};
     var Tileset = exports.Tileset;
     var TileLayer = exports.TileLayer;
 
-    var ObjectLayer = exports.ObjectLayer = function(options) {
+    var ObjectLayer = exports.ObjectLayer = function(options, plugin) {
         for (var key in options) {
             this[key] = options[key];
+        }
+        for (var key in plugin) {
+            this[key] = plugin[key];
         }
         this.initBaseData();
     };

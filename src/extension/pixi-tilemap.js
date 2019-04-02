@@ -1,21 +1,21 @@
 var Tiled = Tiled || {};
 
-// plugin-pixi-tilemap
+// pixi-tilemap
 
 (function(exports) {
 
-    var Utils = exports.Utils;
-    var Collision = exports.Collision;
-    var Tileset = exports.Tileset;
-    var TileLayer = exports.TileLayer;
-    var OrthogonalTileLayer = exports.OrthogonalTileLayer;
-    var IsometricTileLayer = exports.IsometricTileLayer;
-    var StaggeredTileLayer = exports.StaggeredTileLayer;
-    var ObjectLayer = exports.ObjectLayer;
-    var Map = exports.Map;
+    var plugin = {
+        name: "pixi-tilemap"
+    };
+    Tiled.Plugins[plugin.name] = plugin;
+
+    plugin.Map = {};
+    plugin.OrthogonalTileLayer = {};
+    plugin.IsometricTileLayer = {};
+    plugin.StaggeredTileLayer = {};
 
     // `imgLoader` is a function that load img object by `tileset.name , tileset.image`
-    Map.prototype.createTileTextures = function(imgLoader) {
+    plugin.Map.createTileTextures = function(imgLoader) {
         var baseTextureTable = {};
 
         for (var i = 0, len = this.tilesetList.length; i < len; i++) {
@@ -45,9 +45,13 @@ var Tiled = Tiled || {};
         return tileTextures;
     };
 
-    Map.prototype.createTilemap = function(tileTextures, texPerChild) {
+    plugin.Map.createTilemap = function(tileTextures, texPerChild, emptyTexture) {
         // var tilemap = new PIXI.tilemap.CompositeRectTileLayer(0, tileTextures, texPerChild);
         var tilemap = new PIXI.tilemap.RectTileLayer(0, tileTextures);
+
+        if (this.updateTilemap) {
+            this.updateTilemap(tilemap);
+        }
 
         return tilemap;
     };
@@ -58,7 +62,11 @@ var Tiled = Tiled || {};
     ////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////
 
-    OrthogonalTileLayer.prototype.updateTilemap = function(tilemap) {
+    var createTilemap = plugin.Map.createTilemap;
+
+    plugin.OrthogonalTileLayer.createTilemap = createTilemap;
+
+    plugin.OrthogonalTileLayer.updateTilemap = function(tilemap) {
         var scale = this.scale;
 
         var pivotX, pivotY;
@@ -131,7 +139,9 @@ var Tiled = Tiled || {};
     ////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////
 
-    IsometricTileLayer.prototype.updateTilemap = function(tilemap) {
+    plugin.IsometricTileLayer.createTilemap = createTilemap;
+
+    plugin.IsometricTileLayer.updateTilemap = function(tilemap) {
         var scale = this.scale;
 
         var pivotX, pivotY;
@@ -223,7 +233,9 @@ var Tiled = Tiled || {};
     ////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////
 
-    StaggeredTileLayer.prototype.updateTilemap = function(tilemap) {
+    plugin.StaggeredTileLayer.createTilemap = createTilemap;
+
+    plugin.StaggeredTileLayer.updateTilemap = function(tilemap) {
 
         var scale = this.scale;
 
