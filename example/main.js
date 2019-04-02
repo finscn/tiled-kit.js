@@ -17,6 +17,7 @@ var game = {
 };
 
 var app = new PIXI.Application(game.width, game.height, {
+    autoStart:false,
     backgroundColor: 0xbbbbbb,
     view: document.getElementById("canvas"),
     // forceCanvas: true
@@ -50,6 +51,7 @@ function initTiledMap(name, emptyTexture) {
         tileLayer.maxViewY = 20000;
         tileLayer.minScale = 0;
         tileLayer.maxScale = Infinity;
+
         tileLayer.init();
 
         tileLayer.tilemap = tileLayer.createTilemap(tileTextures, 32, emptyTexture);
@@ -80,6 +82,8 @@ function gameLoop() {
     timer.last = timer.now;
 
     updateTiledMap && updateTiledMap(timer.timeStep, timer.now);
+
+    app.render();
 
     requestAnimationFrame(gameLoop);
 }
