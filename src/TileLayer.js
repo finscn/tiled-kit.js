@@ -112,6 +112,13 @@ var Tiled = Tiled || {};
 
         },
 
+        getRowData: function(mapData, row) {
+            return mapData[row];
+        },
+        getColData: function(rowData, col) {
+            return rowData[col];
+        },
+
         restoreChangedState: function() {
             this.originChanged = false;
             this.scaleChanged = false;

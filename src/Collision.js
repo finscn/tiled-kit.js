@@ -44,8 +44,10 @@ var Tiled = Tiled || {};
             endCol = endCol || this.mapCols;
             endRow = endRow || this.mapRows;
 
+            var mapData = this.mapData;
+
             for (var r = row; r < endRow; r++) {
-                var rowData = this.mapData[r];
+                var rowData = this.getRowData(mapData, r);
                 if (!rowData) {
                     continue;
                 }
@@ -53,7 +55,10 @@ var Tiled = Tiled || {};
                 this.mapNodes[r] = rowNodes
 
                 for (var c = col; c < endCol; c++) {
-                    var gid = rowData[c];
+                    var gid = this.getColData(rowData, c);
+                    if (!gid) {
+                        continue
+                    }
                     var tileIndex = gid - 1;
                     var node = {
                         no: gid,
@@ -69,6 +74,13 @@ var Tiled = Tiled || {};
                     rowNodes[c] = node;
                 }
             }
+        },
+
+        getRowData: function(mapData, row) {
+            return mapData[row];
+        },
+        getColData: function(rowData, col) {
+            return rowData[col];
         },
 
         getNode: function(col, row) {
