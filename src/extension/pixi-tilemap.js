@@ -112,12 +112,12 @@ var Tiled = Tiled || {};
             tilemap.clear();
 
             for (var r = startRow; r < endRow; r++) {
-                var rowData = mapData[r];
+                var rowData = this.getRowData(mapData, r);
                 if (!rowData) {
                     continue;
                 }
                 for (var c = startCol; c < endCol; c++) {
-                    var gid = rowData[c];
+                    var gid = this.getColData(rowData, c);
                     if (!gid || gid === 0) {
                         continue;
                     }
@@ -198,9 +198,9 @@ var Tiled = Tiled || {};
                 var row = dataRow;
                 var offsetX = evenRow ? -halfTileWidth : 0;
                 for (var c = startCol; c < endCol; c++) {
-                    var rowData = mapData[row];
+                    var rowData = this.getRowData(mapData, row);
                     if (rowData) {
-                        var gid = rowData[col];
+                        var gid = this.getColData(rowData, col);
                         if (gid) {
                             var tileIndex = gid - 1;
                             var x = c * tileWidth + offsetX;
@@ -286,11 +286,11 @@ var Tiled = Tiled || {};
             var evenRow = startRow % 2 === 0;
 
             for (var r = startRow; r < endRow; r++) {
-                var rowData = mapData[r];
+                var rowData = this.getRowData(mapData, r);
                 if (rowData) {
                     var offsetX = evenRow ? -halfTileWidth : 0;
                     for (var c = startCol; c < endCol; c++) {
-                        var gid = rowData[c];
+                        var gid = this.getColData(rowData, c);
                         if (!gid || gid === 0) {
                             continue;
                         }

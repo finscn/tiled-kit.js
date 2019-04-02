@@ -138,7 +138,7 @@ var Tiled = Tiled || {};
             var endCol = this.viewEndCol;
 
             for (var r = startRow; r < endRow; r++) {
-                var rowData = mapData[r];
+                var rowData = this.getRowData(mapData, r);
                 for (var c = startCol; c < endCol; c++) {
                     var sprite = this.getTileSprite(tilemap, c - startCol, r - startRow);
                     if (!rowData) {
@@ -147,8 +147,8 @@ var Tiled = Tiled || {};
                         }
                         continue;
                     }
-                    var gid = rowData[c];
-                    if (!gid || gid === 0) {
+                    var gid = this.getColData(rowData, c);
+                    if (!gid) {
                         if (tilemap.emptyTexture) {
                             sprite.texture = tilemap.emptyTexture;
                         }
@@ -238,9 +238,9 @@ var Tiled = Tiled || {};
                 var offsetX = evenRow ? -halfTileWidth : 0;
                 for (var c = startCol; c < endCol; c++) {
                     var sprite = this.getTileSprite(tilemap, c - startCol, r - startRow);
-                    var rowData = mapData[row];
+                    var rowData = this.getRowData(mapData, row);
                     if (rowData) {
-                        var gid = rowData[col];
+                        var gid = this.getColData(rowData, col);
                         if (gid) {
                             var tileIndex = gid - 1;
                             var x = c * tileWidth + offsetX;
@@ -250,10 +250,8 @@ var Tiled = Tiled || {};
                             var texture = tilemap.tileTextures[tileIndex];
                             sprite.texture = texture;
                             sprite.position.set(x + t.ox, y + t.oy);
-                        } else {
-                            if (tilemap.emptyTexture) {
-                                sprite.texture = tilemap.emptyTexture;
-                            }
+                        } else if (tilemap.emptyTexture) {
+                            sprite.texture = tilemap.emptyTexture;
                         }
                     } else {
                         if (tilemap.emptyTexture) {
@@ -336,8 +334,8 @@ var Tiled = Tiled || {};
             var evenRow = startRow % 2 === 0;
 
             for (var r = startRow; r < endRow; r++) {
-                var rowData = mapData[r];
                 var offsetX = evenRow ? -halfTileWidth : 0;
+                var rowData = this.getRowData(mapData, r);
                 for (var c = startCol; c < endCol; c++) {
                     var sprite = this.getTileSprite(tilemap, c - startCol, r - startRow);
                     if (!rowData) {
@@ -346,8 +344,8 @@ var Tiled = Tiled || {};
                         }
                         continue;
                     }
-                    var gid = rowData[c];
-                    if (!gid || gid === 0) {
+                    var gid = this.getColData(rowData, c);
+                    if (!gid) {
                         if (tilemap.emptyTexture) {
                             sprite.texture = tilemap.emptyTexture;
                         }
